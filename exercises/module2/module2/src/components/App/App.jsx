@@ -4,9 +4,10 @@ import Button from 'components/Button/Button'
 
 
 const App = () => {
-  const [counter, setCounter] = useState(0)
+  const [counter, setCounter] = useState(JSON.parse(localStorage.getItem("counter")))
   const changeCount = (delta) => {
     setCounter(counter + delta)
+    localStorage.setItem("counter", JSON.stringify(counter))
   }
 
 
