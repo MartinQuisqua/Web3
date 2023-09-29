@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import LoadingPage from '../Loading/Loading';
 
 const Statistique = ({ good, neutral, bad }) => {
    
@@ -43,6 +44,13 @@ const App = () => {
     const [good, setGood] = useState(0)
     const [neutral, setNeutral] = useState(0)
     const [bad, setBad] = useState(0)
+    const [loading, setLoading] = useState(false)
+
+    setTimeout(() => setLoading(true), 3000)
+    
+    if (loading === false) {
+      return <LoadingPage />
+    }
 
     const handleClickGood = () => {
     setGood(good + 1)
@@ -67,6 +75,7 @@ const App = () => {
         <p>Good: {good}</p>
         <p>Neutral: {neutral}</p>
         <p>Bad: {bad}</p>
+        
         <Statistique good={good} neutral={neutral} bad={bad} />
     </div>
   )
