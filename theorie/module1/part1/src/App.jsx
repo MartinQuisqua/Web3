@@ -1,26 +1,22 @@
 import { useState } from 'react'
 
-const Button = (props) => (
-  <button onClick={props.handleClick}>
-    {props.text}
-  </button>
-)
+const Note = ({ note }) => {
+  return (
+    <li>{note.content}</li>
+  )
+}
 
-const App = () => {
-  const [value, setValue] = useState(10)
-
-  const setToValue = (newValue) => {
-    console.log('value now', newValue)
-    setValue(newValue)
-  }
-
+const App = ({ notes }) => {
   return (
     <div>
-    {value}
-    <Button handleClick={() => setToValue(1000)} text="thousand" />
-    <Button handleClick={() => setToValue(0)} text="reset" />
-    <Button handleClick={() => setToValue(value + 1)} text="increment" />
-  </div>
+      <h1>Notes</h1>
+      <ul>
+
+        {notes.map(note => 
+          <Note key={note.id} note={note} />
+        )}
+      </ul>
+    </div>
   )
 }
 
