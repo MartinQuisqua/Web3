@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import management from "../../services/management";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -8,19 +9,31 @@ const App = () => {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      setPersons(response.data);
-    });
+    management
+    .getAll()
+    .then(initialPersons => {
+      console.log('promise fulfilled')
+      setPersons(initialPersons)
+    })
   }, []);
 
   const addPerson = (event) => {
     event.preventDefault();
     console.log("button clicked", event.target);
-    const lowerCaseNewName = newName.toLowerCase();
-    if (
-      persons.find((person) => person.name.toLowerCase() === lowerCaseNewName)
-    ) {
-      alert(`${newName} is already added to phonebook`);
+    const person = persons.find((person) => person.name === newName);
+    if (person) {
+      const changedPerson = { ...person, num: newNum };
+      if (
+        window.confirm(
+          `${newName} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        management
+        .update(changedPerson.id, changedPerson)
+        .then(returnedPerson => {
+          setPersons(persons.map(person => person.id !== changedPerson.id ? person : returnedPerson))
+        })
+      }
       return;
     }
     const personObject = {
@@ -28,9 +41,31 @@ const App = () => {
       num: newNum,
       id: persons.length + 1,
     };
-    setPersons(persons.concat(personObject));
+    management
+      .create(personObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+      })
     setNewName("");
     setNewNum("");
+  };
+
+
+  const deletePerson = (id) => {
+    const person = persons.find((person) => person.id === id);
+
+    management
+      .deleted(id)
+      .then(returnedPerson => {
+        setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+      })
+      .catch(error => {
+        alert(
+          `the note '${person.name}' was already deleted from server`
+        )
+        setPersons(persons.filter(n => n.id !== id))
+      }
+      )
   };
 
   const handlePersonChange = (event) => {
@@ -67,12 +102,17 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <ul>
-        {personsToShow.map((person) => (
-          <li key={person.name}>
-            {person.name} {person.num}
-          </li>
-        ))}
+       
+          {personsToShow.map((person) => (
+            <li key={person.id}>
+              {person.name} {person.num} <button onClick={() => deletePerson(person.id)}>delete</button>
+              
+            </li>
+          ))}
+        
       </ul>
+      
+
     </div>
   );
 };
