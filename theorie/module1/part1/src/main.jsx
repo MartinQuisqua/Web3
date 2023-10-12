@@ -1,10 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import axios from 'axios';
 
-import App from './App'
+import AppLoader from './components/App/AppLoader.jsx'
 
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<AppLoader />);
 
-
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 
